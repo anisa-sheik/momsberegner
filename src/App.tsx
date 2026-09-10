@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import './App.css';
 
 export default function App() {
   const [currency, setCurrency] = useState<'DKK' | 'EUR'>('EUR');
   
-  // Felter starter tomme eller klar til hurtig indtastning
   const [purchasePriceStr, setPurchasePriceStr] = useState<string>('');
   const [exchangeRateStr, setExchangeRateStr] = useState<string>('7,45');
   const [totalShippingStr, setTotalShippingStr] = useState<string>(''); 
@@ -40,7 +40,6 @@ export default function App() {
 
   const formatDKK = (num: number) => num.toLocaleString('da-DK', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' kr.';
 
-  // Funktion til at nulstille varedata til næste vare med ét klik
   const handleNextItemReset = () => {
     setPurchasePriceStr('');
     setTotalShippingStr('');
@@ -95,7 +94,7 @@ export default function App() {
       minHeight: '100vh',
       backgroundColor: colors.bg,
       color: colors.textMain,
-      padding: '32px 16px',
+      padding: '24px 12px',
       boxSizing: 'border-box',
       display: 'flex',
       flexDirection: 'column',
@@ -104,7 +103,7 @@ export default function App() {
       <div style={{ width: '100%', maxWidth: '1000px' }}>
         
         {/* Header */}
-        <header style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <header style={{ textAlign: 'center', marginBottom: '28px' }}>
           <span style={{ 
             backgroundColor: '#3b82f622', 
             color: colors.accent, 
@@ -118,46 +117,41 @@ export default function App() {
             Professionel Prissætter
           </span>
           <h1 style={{ 
-            fontSize: '28px', 
+            fontSize: '24px', 
             fontWeight: 800, 
             color: colors.textMain, 
-            margin: '12px 0 6px 0',
+            margin: '10px 0 6px 0',
             letterSpacing: '-0.5px'
           }}>
             Butiks & Webshop Momsberegner
           </h1>
           <p style={{ 
-            fontSize: '14px', 
+            fontSize: '13px', 
             color: colors.textSecondary, 
             margin: '0' 
           }}>
-            Beregn den rigtige salgspris, indregn fragt og se din faktiske fortjeneste med et øjekast.
+            Beregn den rigtige salgspris, indregn fragt og se din faktiske fortjeneste.
           </p>
         </header>
 
-        {/* To-kolonne Layout */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
-          gap: '24px',
-          alignItems: 'start'
-        }}>
+        {/* Responsivt Layout (Skifter automatisk mellem 1 og 2 kolonner) */}
+        <div className="responsive-grid">
           
           {/* VENSTRE KOLONNE: Indtastning */}
           <div style={{ 
             backgroundColor: colors.cardBg, 
-            padding: '24px', 
+            padding: '20px', 
             borderRadius: '16px', 
             border: `1px solid ${colors.border}`,
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px'
+            gap: '18px'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `1px solid ${colors.border}`, paddingBottom: '10px' }}>
               <h2 style={{ 
                 margin: '0', 
-                fontSize: '15px', 
+                fontSize: '14px', 
                 fontWeight: 700, 
                 color: colors.textSecondary,
                 textTransform: 'uppercase',
@@ -173,7 +167,7 @@ export default function App() {
                   border: 'none',
                   padding: '6px 10px',
                   borderRadius: '6px',
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'flex',
@@ -182,7 +176,7 @@ export default function App() {
                 }}
                 title="Tøm felter til næste vare"
               >
-                🔄 Næste vare / Nulstil
+                🔄 Næste vare
               </button>
             </div>
 
@@ -193,22 +187,22 @@ export default function App() {
                 <button 
                   onClick={() => setCurrency('EUR')}
                   style={{
-                    flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px',
+                    flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px',
                     background: currency === 'EUR' ? colors.borderFocus : colors.inputBg,
                     color: colors.textMain, border: `1px solid ${colors.border}`, fontWeight: 600
                   }}
                 >
-                  🇪🇺 EUR (€) - EU-køb
+                  🇪🇺 EUR (€)
                 </button>
                 <button 
                   onClick={() => setCurrency('DKK')}
                   style={{
-                    flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px',
+                    flex: 1, padding: '10px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px',
                     background: currency === 'DKK' ? colors.borderFocus : colors.inputBg,
                     color: colors.textMain, border: `1px solid ${colors.border}`, fontWeight: 600
                   }}
                 >
-                  🇩🇰 DKK (kr.) - Dansk
+                  🇩🇰 DKK (kr.)
                 </button>
               </div>
             </div>
@@ -239,7 +233,7 @@ export default function App() {
                   style={inputStyle}
                 />
               </label>
-              <span style={helperStyle}>Prisen du betaler til din leverandør pr. stk.</span>
+              <span style={helperStyle}>Prisen pr. stk. hos leverandøren.</span>
             </div>
 
             {/* Fragt og antal */}
@@ -258,7 +252,7 @@ export default function App() {
               </div>
               <div>
                 <label style={labelStyle}>
-                  Antal varer i ordre
+                  Antal varer
                   <input 
                     type="text" 
                     value={totalItemsStr} 
@@ -269,11 +263,11 @@ export default function App() {
                 </label>
               </div>
             </div>
-            <span style={{ ...helperStyle, marginTop: '-10px' }}>Fragten fordeles automatisk ligeligt ud på alle varerne.</span>
+            <span style={{ ...helperStyle, marginTop: '-10px' }}>Fragten fordeles ligeligt på varerne.</span>
 
             <h2 style={{ 
               margin: '10px 0 0 0', 
-              fontSize: '15px', 
+              fontSize: '14px', 
               fontWeight: 700, 
               color: colors.textSecondary,
               textTransform: 'uppercase',
@@ -286,7 +280,7 @@ export default function App() {
 
             <div>
               <label style={labelStyle}>
-                Ønsket avance / fortjeneste (%)
+                Ønsket avance (%)
                 <input 
                   type="text" 
                   value={markupPercentStr} 
@@ -294,13 +288,12 @@ export default function App() {
                   style={inputStyle}
                 />
               </label>
-              <span style={helperStyle}>Hvor mange procent du vil lægge oven i din kostpris.</span>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={labelStyle}>
-                  Emballage pr. stk. (kr.)
+                  Emballage (kr.)
                   <input 
                     type="text" 
                     value={packagingStr} 
@@ -312,7 +305,7 @@ export default function App() {
               </div>
               <div>
                 <label style={labelStyle}>
-                  Kortgebyr / Betaling (%)
+                  Kortgebyr (%)
                   <input 
                     type="text" 
                     value={paymentFeeStr} 
@@ -325,7 +318,7 @@ export default function App() {
 
             <div>
               <label style={labelStyle}>
-                Momssats til staten
+                Momssats
                 <select 
                   value={vatRate} 
                   onChange={(e) => setVatRate(Number(e.target.value))}
@@ -342,20 +335,18 @@ export default function App() {
           {/* HØJRE KOLONNE: Resultatopgørelse */}
           <div style={{ 
             backgroundColor: colors.cardBg, 
-            padding: '24px', 
+            padding: '20px', 
             borderRadius: '16px', 
             border: `1px solid ${colors.border}`,
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            position: 'sticky',
-            top: '24px'
+            justifyContent: 'space-between'
           }}>
             <div>
               <h2 style={{ 
-                margin: '0 0 20px 0', 
-                fontSize: '15px', 
+                margin: '0 0 16px 0', 
+                fontSize: '14px', 
                 fontWeight: 700, 
                 color: colors.textSecondary,
                 textTransform: 'uppercase',
@@ -366,10 +357,10 @@ export default function App() {
                 Resultatopgørelse & Pris
               </h2>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
                 
                 {currency === 'EUR' && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.textSecondary, fontSize: '13px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.textSecondary }}>
                     <span>Fragt lagt til pr. vare:</span> 
                     <span>+ {shippingPerItem.toFixed(2)} € ({formatDKK(shippingPerItem * exchangeRate)})</span>
                   </div>
@@ -382,40 +373,40 @@ export default function App() {
                   </div>
                 )}
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: colors.textSecondary }}>Salgspris ekskl. moms:</span> 
                   <span style={{ fontWeight: 600, color: colors.textMain }}>{formatDKK(netSellingPrice)}</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.textSecondary, fontSize: '13px' }}>
-                  <span>Variable omkostninger (Emballage + Gebyr):</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.textSecondary }}>
+                  <span>Variable omkostninger:</span>
                   <span>{formatDKK(packagingCost + paymentFeeAmount)}</span>
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: colors.textSecondary }}>Moms ({vatRate}% som opkræves):</span> 
+                  <span style={{ color: colors.textSecondary }}>Moms ({vatRate}%):</span> 
                   <span style={{ fontWeight: 600, color: colors.textMain }}>{formatDKK(vatAmount)}</span>
                 </div>
                 
                 {/* Slutpris boks */}
                 <div style={{ 
                   backgroundColor: colors.inputBg, 
-                  padding: '16px', 
+                  padding: '14px', 
                   borderRadius: '12px', 
-                  marginTop: '8px',
+                  marginTop: '6px',
                   display: 'flex', 
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   border: `1px solid ${colors.border}`
                 }}>
                   <div>
-                    <span style={{ fontWeight: 600, color: colors.textMain, display: 'block', fontSize: '14px' }}>
+                    <span style={{ fontWeight: 600, color: colors.textMain, display: 'block', fontSize: '13px' }}>
                       Pris kunden betaler:
                     </span>
-                    <span style={{ fontSize: '12px', color: colors.textSecondary }}>Inkl. alle omkostninger og moms</span>
+                    <span style={{ fontSize: '11px', color: colors.textSecondary }}>Inkl. alle omkostninger og moms</span>
                   </div>
                   <span style={{ 
-                    fontSize: '22px', 
+                    fontSize: '20px', 
                     fontWeight: 800, 
                     color: colors.accent 
                   }}>
@@ -423,12 +414,12 @@ export default function App() {
                   </span>
                 </div>
 
-                <div style={{ height: '1px', backgroundColor: colors.border, margin: '8px 0' }} />
+                <div style={{ height: '1px', backgroundColor: colors.border, margin: '6px 0' }} />
                 
                 {/* Reel fortjeneste boks */}
                 <div style={{ 
                   backgroundColor: colors.successBg, 
-                  padding: '18px', 
+                  padding: '16px', 
                   borderRadius: '12px', 
                   border: `1px solid ${colors.success}55`,
                   display: 'flex', 
@@ -436,15 +427,15 @@ export default function App() {
                   alignItems: 'center'
                 }}>
                   <div>
-                    <span style={{ fontWeight: 700, color: colors.success, display: 'block', fontSize: '15px' }}>
+                    <span style={{ fontWeight: 700, color: colors.success, display: 'block', fontSize: '14px' }}>
                       Reel fortjeneste pr. stk.
                     </span>
-                    <span style={{ fontSize: '12px', color: colors.textSecondary }}>
-                      Når alt er betalt (Tjeneste-margin: {grossMargin.toFixed(1)}%)
+                    <span style={{ fontSize: '11px', color: colors.textSecondary }}>
+                      Margin: {grossMargin.toFixed(1)}%
                     </span>
                   </div>
                   <span style={{ 
-                    fontSize: '22px', 
+                    fontSize: '20px', 
                     fontWeight: 800, 
                     color: colors.success 
                   }}>
@@ -455,9 +446,9 @@ export default function App() {
               </div>
             </div>
 
-            <div style={{ marginTop: '24px', textAlign: 'center' }}>
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
               <p style={{ fontSize: '11px', color: colors.textSecondary, margin: '0' }}>
-                Klar til produktion • Klik på "Næste vare / Nulstil" øverst for at rydde felterne.
+                Klar til mobil og webshop.
               </p>
             </div>
           </div>
