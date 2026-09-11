@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './App.css';
 
 export default function App() {
-  const [currency, setCurrency] = useState<'DKK' | 'EUR'>('EUR');
+  const [currency, setCurrency] = useState<'DKK' | 'EUR'>('DKK');
   
   const [purchasePriceStr, setPurchasePriceStr] = useState<string>('');
   const [exchangeRateStr, setExchangeRateStr] = useState<string>('7,45');
@@ -104,22 +104,7 @@ export default function App() {
       <div style={{ width: '100%', maxWidth: '960px' }}>
         
         {/* Header */}
-        <header style={{ textAlign: 'center', marginBottom: '32px', paddingTop: '16px' }}>
-          <div style={{ 
-            display: 'inline-block',
-            backgroundColor: 'rgba(56, 189, 248, 0.1)', 
-            color: colors.accent, 
-            padding: '6px 14px', 
-            borderRadius: '30px', 
-            fontSize: '11px', 
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '1.5px',
-            border: '1px solid rgba(56, 189, 248, 0.2)',
-            marginBottom: '12px'
-          }}>
-            Next-Gen WebApp 2026
-          </div>
+        <header style={{ textAlign: 'center', marginBottom: '32px', paddingTop: '24px' }}>
           <h1 style={{ 
             fontSize: '26px', 
             fontWeight: 800, 
@@ -133,12 +118,12 @@ export default function App() {
             fontSize: '14px', 
             color: colors.textSecondary, 
             margin: '0',
-            maxWidth: '450px',
+            maxWidth: '480px',
             marginLeft: 'auto',
             marginRight: 'auto',
             lineHeight: '1.5'
           }}>
-            Præcis prissætning, fragtfordeling og reel bundlinje i ét lynhurtigt flow.
+            Præcis prissætning, fragtfordeling og reel bundlinje for danske webshops.
           </p>
         </header>
 
@@ -196,18 +181,6 @@ export default function App() {
               <label style={labelStyle}>Indkøbsvaluta</label>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button 
-                  onClick={() => setCurrency('EUR')}
-                  style={{
-                    flex: 1, padding: '12px', borderRadius: '12px', cursor: 'pointer', fontSize: '13px',
-                    background: currency === 'EUR' ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' : colors.inputBg,
-                    color: colors.textMain, border: currency === 'EUR' ? '1px solid #60a5fa' : `1px solid ${colors.border}`, 
-                    fontWeight: 600, boxShadow: currency === 'EUR' ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  🇪🇺 EUR (€)
-                </button>
-                <button 
                   onClick={() => setCurrency('DKK')}
                   style={{
                     flex: 1, padding: '12px', borderRadius: '12px', cursor: 'pointer', fontSize: '13px',
@@ -218,6 +191,18 @@ export default function App() {
                   }}
                 >
                   🇩🇰 DKK (kr.)
+                </button>
+                <button 
+                  onClick={() => setCurrency('EUR')}
+                  style={{
+                    flex: 1, padding: '12px', borderRadius: '12px', cursor: 'pointer', fontSize: '13px',
+                    background: currency === 'EUR' ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' : colors.inputBg,
+                    color: colors.textMain, border: currency === 'EUR' ? '1px solid #60a5fa' : `1px solid ${colors.border}`, 
+                    fontWeight: 600, boxShadow: currency === 'EUR' ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  🇪🇺 EUR (€)
                 </button>
               </div>
             </div>
@@ -244,7 +229,7 @@ export default function App() {
                   type="text" 
                   value={purchasePriceStr} 
                   onChange={(e) => setPurchasePriceStr(e.target.value)}
-                  placeholder="F.eks. 4,69"
+                  placeholder={currency === 'EUR' ? "F.eks. 4,69" : "F.eks. 35,00"}
                   style={inputStyle}
                 />
               </label>
@@ -473,7 +458,7 @@ export default function App() {
 
             <div style={{ textAlign: 'center', borderTop: `1px solid ${colors.border}`, paddingTop: '16px' }}>
               <p style={{ fontSize: '11px', color: colors.textSecondary, margin: '0', letterSpacing: '0.3px' }}>
-                Optimized for Mobile Retail & Webshop 🚀
+                Professionel prissætter til danske webshops 🚀
               </p>
             </div>
           </div>
