@@ -5,6 +5,7 @@ export default function App() {
   const [currency, setCurrency] = useState<'DKK' | 'EUR'>('DKK');
   
   const [purchasePriceStr, setPurchasePriceStr] = useState<string>('');
+  const [purchasePriceMode, setPurchasePriceMode] = useState<'excl' | 'incl'>('excl');
   const [exchangeRateStr, setExchangeRateStr] = useState<string>('7,45');
   const [totalShippingStr, setTotalShippingStr] = useState<string>(''); 
   const [totalItemsStr, setTotalItemsStr] = useState<string>(''); 
@@ -18,7 +19,13 @@ export default function App() {
     return isNaN(num) ? 0 : num;
   };
 
-  const purchasePrice = parseNum(purchasePriceStr);
+  const rawPurchasePrice = parseNum(purchasePriceStr);
+  
+  // Hvis indkøbsprisen er indtastet INKL. moms, omregner vi den til ekskl. moms baseret på valgt momssats
+  const purchasePrice = purchasePriceMode === 'incl' && vatRate > 0
+    ? rawPurchasePrice / (1 + vatRate / 100)
+    : rawPurchasePrice;
+
   const exchangeRate = parseNum(exchangeRateStr);
   const totalShipping = parseNum(totalShippingStr);
   const totalItems = parseNum(totalItemsStr);
@@ -54,7 +61,6 @@ export default function App() {
     textMain: '#f8fafc',
     textSecondary: '#94a3b8',
     border: 'rgba(51, 65, 85, 0.6)',
-    borderFocus: '#3b82f6',
     accent: '#38bdf8',
     success: '#10b981',
     successBg: 'rgba(6, 78, 59, 0.3)'
@@ -222,17 +228,55 @@ export default function App() {
               </div>
             )}
 
+            {/* Indkøbspris med Inkl/Ekskl moms valg */}
             <div>
-              <label style={labelStyle}>
-                Varens indkøbspris ekskl. moms ({currency === 'EUR' ? '€' : 'kr.'})
-                <input 
-                  type="text" 
-                  value={purchasePriceStr} 
-                  onChange={(e) => setPurchasePriceStr(e.target.value)}
-                  placeholder={currency === 'EUR' ? "F.eks. 4,69" : "F.eks. 35,00"}
-                  style={inputStyle}
-                />
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ ...labelStyle, marginBottom: 0 }}>
+                  Varens indkøbspris ({currency === 'EUR' ? '€' : 'kr.'})
+                </label>
+                <div style={{ display: 'flex', background: colors.inputBg, borderRadius: '8px', padding: '2px', border: `1px solid ${colors.border}` }}>
+                  <button
+                    onClick={() => setPurchasePriceMode('excl')}
+                    style={{
+                      background: purchasePriceMode === 'excl' ? '#2563eb' : 'transparent',
+                      color: colors.textMain,
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '4px 8px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Ekskl. moms
+                  </button>
+                  <button
+                    onClick={() => setPurchasePriceMode('incl')}
+                    style={{
+                      background: purchasePriceMode === 'incl' ? '#2563eb' : 'transparent',
+                      color: colors.textMain,
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '4px 8px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Inkl. moms
+                  </button>
+                </div>
+              </div>
+              <input 
+                type="text" 
+                value={purchasePriceStr} 
+                onChange={(e) => setPurchasePriceStr(e.target.value)}
+                placeholder={currency === 'EUR' ? "F.eks. 4,69" : (purchasePriceMode === 'incl' ? "F.eks. 43,75" : "F.eks. 35,00")}
+                style={inputStyle}
+              />
+              <span style={helperStyle}>
+                {purchasePriceMode === 'incl' ? 'Indtast pris inkl. moms (omregnes automatisk)' : 'Indtast pris ekskl. moms'}
+              </span>
             </div>
 
             {/* Fragt og antal */}
@@ -373,41 +417,42 @@ export default function App() {
                 {currency === 'EUR' && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.textSecondary }}>
                     <span>Fragt lagt til pr. vare:</span> 
-                    <span>+ {shippingPerItem.toFixed(2)} € ({formatDKK(shippingPerItem * exchangeRate)})</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>+ {shippingPerItem.toFixed(2)} € ({formatDKK(shippingPerItem * exchangeRate)})</span>
                   </div>
                 )}
 
                 {currency === 'EUR' && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.accent }}>
                     <span>Samlet indkøbspris inkl. fragt:</span> 
-                    <span style={{ fontWeight: 600 }}>{formatDKK(purchasePriceInDKK)}</span>
+                    <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDKK(purchasePriceInDKK)}</span>
                   </div>
                 )}
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: colors.textSecondary }}>Salgspris ekskl. moms:</span> 
-                  <span style={{ fontWeight: 600, color: colors.textMain }}>{formatDKK(netSellingPrice)}</span>
+                  <span style={{ fontWeight: 600, color: colors.textMain, whiteSpace: 'nowrap' }}>{formatDKK(netSellingPrice)}</span>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: colors.textSecondary }}>
                   <span>Variable omkostninger:</span>
-                  <span>{formatDKK(packagingCost + paymentFeeAmount)}</span>
+                  <span style={{ whiteSpace: 'nowrap' }}>{formatDKK(packagingCost + paymentFeeAmount)}</span>
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: colors.textSecondary }}>Moms ({vatRate}%):</span> 
-                  <span style={{ fontWeight: 600, color: colors.textMain }}>{formatDKK(vatAmount)}</span>
+                  <span style={{ fontWeight: 600, color: colors.textMain, whiteSpace: 'nowrap' }}>{formatDKK(vatAmount)}</span>
                 </div>
                 
-                {/* Slutpris boks */}
+                {/* Slutpris boks (Optimeret mod tekstknæk på mobil) */}
                 <div style={{ 
                   backgroundColor: colors.inputBg, 
-                  padding: '18px', 
+                  padding: '16px 18px', 
                   borderRadius: '16px', 
                   marginTop: '8px',
                   display: 'flex', 
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  gap: '12px',
                   border: `1px solid ${colors.border}`
                 }}>
                   <div>
@@ -417,37 +462,42 @@ export default function App() {
                     <span style={{ fontSize: '11px', color: colors.textSecondary }}>Inkl. alle omkostninger & moms</span>
                   </div>
                   <span style={{ 
-                    fontSize: '22px', 
+                    fontSize: '20px', 
                     fontWeight: 800, 
-                    color: colors.accent 
+                    color: colors.accent,
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
                   }}>
                     {formatDKK(sellingPriceInclVat)}
                   </span>
                 </div>
 
-                {/* Reel fortjeneste boks */}
+                {/* Reel fortjeneste boks (Optimeret mod tekstknæk på mobil) */}
                 <div style={{ 
                   backgroundColor: colors.successBg, 
-                  padding: '18px', 
+                  padding: '16px 18px', 
                   borderRadius: '16px', 
                   border: `1px solid rgba(16, 185, 129, 0.3)`,
                   display: 'flex', 
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  gap: '12px',
                   marginTop: '4px'
                 }}>
                   <div>
-                    <span style={{ fontWeight: 700, color: colors.success, display: 'block', fontSize: '14px' }}>
+                    <span style={{ fontWeight: 700, color: colors.success, display: 'block', fontSize: '13px' }}>
                       Reel fortjeneste pr. stk.
                     </span>
-                    <span style={{ fontSize: '12px', color: colors.textSecondary }}>
+                    <span style={{ fontSize: '11px', color: colors.textSecondary }}>
                       Margin: {grossMargin.toFixed(1)}%
                     </span>
                   </div>
                   <span style={{ 
-                    fontSize: '22px', 
+                    fontSize: '20px', 
                     fontWeight: 800, 
-                    color: colors.success 
+                    color: colors.success,
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
                   }}>
                     {formatDKK(trueProfit)}
                   </span>
